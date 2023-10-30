@@ -1,40 +1,35 @@
 package com.example.piedrapapeltijera
 
 import android.os.Bundle
-import android.text.style.BackgroundColorSpan
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.piedrapapeltijera.ui.theme.PiedraPapelTijeraTheme
+import kotlin.random.Random
 
 
 class MainActivity : ComponentActivity() {
@@ -48,7 +43,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background,
 
                 ) {
-                    Greeting("Android")
+                    juego()
                 }
             }
         }
@@ -56,121 +51,238 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-/*https://medium.com/@squonk-/learn-creating-a-desktop-app-with-jetpack-compose-rock-paper-scissors-54a55bf4fbf5*/
-    //hay una columna.
-    Column (
-        modifier=Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.SpaceBetween
+fun juego(modifier: Modifier = Modifier) {
 
-    ) {
-        Row (modifier=Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center){
-            Text(text = "Recuento")
-        }
-        //Tenemos una fila con tres imágenes.
-        Row(
-            verticalAlignment = Alignment.Top,
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.height(70.dp)
+    var jugador = remember{mutableStateOf("")}
+    var maquina = remember { mutableStateOf("")}
+    var puntosJugador = remember {mutableStateOf(0) }
+    var puntosMaquina =remember { mutableStateOf(0) }
+    val recuento="${puntosJugador.value}-${puntosMaquina.value}"
+    //El context para el toast
+    val context= LocalContext.current
+    // Hacemos el toast.
+    val toast: Toast = Toast.makeText(context, "undefined!", Toast.LENGTH_SHORT)
 
+    //Hacemo una condición que se rompe en el momento que la puntuación o de la
+    //máquina o del jugador llega a 5.
 
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceBetween
+        )
+        {
+            //Fila que enseña el recuento total de las puntuaciones.
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .weight(1F, true)
+                    .fillMaxWidth(),
 
-        ) {
+                horizontalArrangement = Arrangement.SpaceEvenly
 
+            ) {
+                Text(text = "$recuento", fontSize = 36.sp)
+            }
+            Row(verticalAlignment = Alignment.Top,
+                modifier = Modifier
+                    .weight(2F, true)
+                    .fillMaxWidth(),
 
-            Image(
-                painter = painterResource(id = R.drawable.piedra),
-                contentDescription = "piedra",
-                modifier= Modifier.weight(1F,true)
-                    .clickable {  }
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ){
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-            )
+                        Text(text = "Jugador", modifier = Modifier.padding(24.dp))
+                    }
 
-
-
-            Image(
-                painter = painterResource(id = R.drawable.papel),
-                contentDescription = "papel",
-                modifier= Modifier.weight(1F, true) .clickable {  }
-            )
-
-
-
-            Image(
-                painter = painterResource(id = R.drawable.tijeras),
-                contentDescription = "tijeras",
-                modifier= Modifier.weight(1F, true) .clickable {  }
-            )
-
-        }
-
-        Row ( horizontalArrangement = Arrangement.SpaceEvenly,
-            modifier = Modifier.fillMaxWidth()
-
-                ){
-
-            Column (horizontalAlignment = Alignment.CenterHorizontally){
-
-                Text(text = "Jugador 1", modifier = Modifier.padding(24.dp))
-                Image(painter = painterResource(id = R.drawable.ic_launcher_background), contentDescription = "whatever",
-                    modifier= Modifier.size(150.dp))
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(text = "Máquina", modifier = Modifier.padding(24.dp))
+                    }
 
             }
+            Row(verticalAlignment = Alignment.Top,
+                modifier = Modifier
+                    .weight(2F, true)
+                    .fillMaxWidth(),
 
-            Column(horizontalAlignment = Alignment.CenterHorizontally){
-                Text(text = "Jugador 2", modifier = Modifier.padding(24.dp))
-                Image(painter = painterResource(id = R.drawable.ic_launcher_background), contentDescription = "whatever",
-                    modifier= Modifier.size(150.dp))
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+
+                if (puntosJugador.value<5&&puntosMaquina.value<5) {
+                    //Llama a la función que pinta la imagen del movimiento del jugador
+                    movimiento(jugador.value)
+
+                    //LLama a la función que pinta la imagen del movimiento de la máquina,
+                    //Esta imagen dependerá de la función que randomiza el movimiento de la
+                    //máquina.
+                    movimiento(maquina.value)
+                } else {
+
+                    Column {
+                        //Se pone al ganador
+                        if (puntosJugador.value > puntosMaquina.value) {
+                            Text(text = "Ha ganado el jugador")
+                        } else if (puntosJugador.value < puntosMaquina.value) {
+                            Text(text = "Ha ganado la máquina")
+                        } else {
+                            Text(text = "Empate")
+                        }
+
+                        Text(
+                            text = "Si quiere volver a jugar, haga click sobre este texto!",
+                            modifier = Modifier.clickable
+                            {
+                                puntosJugador.value=0
+                                puntosMaquina.value=0
+
+                            }
+                        )
+                        jugador.value=""
+                        movimiento(jugador.value)
+
+                        maquina.value=""
+                        movimiento(maquina.value)
+
+                    }
+
+                }
             }
 
+            //Tenemos una fila con tres imágenes que hacen de botón.
+            Row(
+                verticalAlignment = Alignment.Bottom,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .height(70.dp)
+                    .weight(2F, true)
 
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.piedra),
+                    contentDescription = "piedra",
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .weight(1F, true)
+                        .clickable {
+                            //Pone el movimiento del jugador a Piedra.
+                            jugador.value = "Piedra"
+
+                            //Llama a la función que devuelve un String con la tirada
+                            //de la máquina.
+                            maquina.value = tiradaMaquina()
+
+                            //Hacemos el toast
+                            if (jugador.value == maquina.value) {
+                                toast.setText("Empate")
+
+                            } else if (jugador.value == "Piedra" && maquina.value == "Papel") {
+                                toast.setText("Ha ganado la máquina")
+                                //Sumamos un punto a la máquina.
+                                puntosMaquina.value++
+                            } else if (jugador.value == "Piedra" && maquina.value == "Tijeras") {
+                                toast.setText("Ha ganado el jugador")
+                                //Sumamos un punto al jugador
+                                puntosJugador.value++
+                            }
+                            toast.show()
+                        }
+                )
+                Image(
+                    painter = painterResource(id = R.drawable.papel),
+                    contentDescription = "papel",
+                    modifier = Modifier
+                        .weight(1F, true)
+                        .clickable {
+                            //Pone el movimiento del jugador a Papel.
+                            jugador.value = "Papel"
+
+                            //Llama a la función que devuelve un String con la tirada
+                            //de la máquina.
+                            maquina.value = tiradaMaquina()
+
+                            //Hacemos el toast
+                            if (jugador.value == maquina.value) {
+                                toast.setText("Empate")
+
+                            } else if (jugador.value == "Papel" && maquina.value == "Tijeras") {
+                                toast.setText("Ha ganado la máquina")
+                                //Sumamos un punto a la máquina.
+                                puntosMaquina.value++
+                            } else if (jugador.value == "Papel" && maquina.value == "Piedra") {
+                                toast.setText("Ha ganado el jugador")
+                                //Sumamos un punto al jugador
+                                puntosJugador.value++
+                            }
+                            toast.show()
+                        }
+                )
+                Image(
+                    painter = painterResource(id = R.drawable.tijeras),
+                    contentDescription = "tijeras",
+                    modifier = Modifier
+                        .weight(1F, true)
+                        .clickable {
+                            //Pone el movimiento del jugador a Tijeras.
+                            jugador.value = "Tijeras"
+
+                            //Llama a la función que devuelve un String con la tirada
+                            //de la máquina.
+                            maquina.value = tiradaMaquina()
+
+                            //Hacemos el toast
+                            if (jugador.value == maquina.value) {
+                                toast.setText("Empate")
+
+                            } else if (jugador.value == "Tijeras" && maquina.value == "Piedra") {
+                                toast.setText("Ha ganado la máquina")
+                                //Sumamos un punto a la máquina.
+                                puntosMaquina.value++
+                            } else if (jugador.value == "Tijeras" && maquina.value == "Papel") {
+                                toast.setText("Ha ganado el jugador")
+                                //Sumamos un punto al jugador
+                                puntosJugador.value++
+                            }
+                            toast.show()
+                        }
+                )
+
+            } //Fila con el mensaje
+        }
         }
 
-        //Tenemos una fila con tres imágenes.
-        Row(
-            verticalAlignment = Alignment.Bottom,
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.height(70.dp)
-
-        ) {
-
-
-            Image(
-                painter = painterResource(id = R.drawable.piedra),
-                contentDescription = "piedra",
-                modifier= Modifier.clip(CircleShape).weight(1F,true).clickable {  }
-
-            )
-
-
-
-            Image(
-                painter = painterResource(id = R.drawable.papel),
-                contentDescription = "papel",
-                modifier= Modifier.weight(1F, true) .clickable {  }
-            )
-
-
-
-            Image(
-                painter = painterResource(id = R.drawable.tijeras),
-                contentDescription = "tijeras",
-                modifier= Modifier.weight(1F, true) .clickable {  }
-            )
-
-        }
-
+/**
+ * Método que pinta la imagen según el movimiento del jugador o de la máquina.
+ * Hace un switch según el string de entrada.
+ * @param imagen cadena que indica de qué tipo es el movimiento
+ */
+@Composable
+fun movimiento(imagen:String) {
+    when (imagen) {
+        "Piedra"-> Image (painter = painterResource(id = R.drawable.piedra), contentDescription = "Piedra")
+        "Papel"-> Image(painter = painterResource(id = R.drawable.papel), contentDescription = "Papel")
+        "Tijeras"-> Image(painter = painterResource(id = R.drawable.tijeras), contentDescription = "Tijeras")
     }
 
+}
 
+/**
+ * Función que elige por la máquina. Saca un valor aleatorio de una lista.
+ * Según el index, se asigna uno de los valores de la lista.
+ * @return devuelve un String con el movimiento de la máquina
+*/
+fun tiradaMaquina ():String {
+    var movimiento=""
+    val list= listOf("Piedra", "Papel", "Tijeras")
+    val index= Random.nextInt(list.size)
+    movimiento=list[index]
 
+    return movimiento
 }
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     PiedraPapelTijeraTheme {
-        Greeting("Android")
+        juego()
     }
 }
