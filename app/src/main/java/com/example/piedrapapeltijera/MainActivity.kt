@@ -50,22 +50,25 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/**
+ * Función que diseña la interfaz.
+ */
 @Composable
 fun juego(modifier: Modifier = Modifier) {
 
-    var jugador = remember{mutableStateOf("")}
-    var maquina = remember { mutableStateOf("")}
-    var puntosJugador = remember {mutableStateOf(0) }
-    var puntosMaquina =remember { mutableStateOf(0) }
-    val recuento="${puntosJugador.value}-${puntosMaquina.value}"
+    //Declaración de variables
+    var jugador = remember{mutableStateOf("")}//Guarda la tirada del jugador
+    var maquina = remember { mutableStateOf("")}//Guarda la tirada de la máquina
+    var puntosJugador = remember {mutableStateOf(0) }//Guarda los puntos del jugador
+    var puntosMaquina =remember { mutableStateOf(0) }//Guarda los puntos de la máquina
+    val recuento="${puntosJugador.value}-${puntosMaquina.value}"//Guarda el recuento de los puntos.
+
     //El context para el toast
     val context= LocalContext.current
     // Hacemos el toast.
     val toast: Toast = Toast.makeText(context, "undefined!", Toast.LENGTH_SHORT)
 
-    //Hacemo una condición que se rompe en el momento que la puntuación o de la
-    //máquina o del jugador llega a 5.
-
+    //Empezamos con una columna principal que contendrá el resto de elementos.
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.SpaceBetween
@@ -83,6 +86,7 @@ fun juego(modifier: Modifier = Modifier) {
             ) {
                 Text(text = "$recuento", fontSize = 36.sp)
             }
+            //Fila que indica los nombres de los jugadores.
             Row(verticalAlignment = Alignment.Top,
                 modifier = Modifier
                     .weight(2F, true)
@@ -100,6 +104,7 @@ fun juego(modifier: Modifier = Modifier) {
                     }
 
             }
+            //Fila que contiene el tablero del juego.
             Row(verticalAlignment = Alignment.Top,
                 modifier = Modifier
                     .weight(2F, true)
@@ -107,7 +112,8 @@ fun juego(modifier: Modifier = Modifier) {
 
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-
+                //Hacemo una condición que se rompe en el momento que la puntuación o de la
+                //máquina o del jugador llega a 5. Esto en realidad sería un bucle.
                 if (puntosJugador.value<5&&puntosMaquina.value<5) {
                     //Llama a la función que pinta la imagen del movimiento del jugador
                     movimiento(jugador.value)
@@ -116,8 +122,9 @@ fun juego(modifier: Modifier = Modifier) {
                     //Esta imagen dependerá de la función que randomiza el movimiento de la
                     //máquina.
                     movimiento(maquina.value)
-                } else {
 
+                //Cuando se rompe la condición, bloqueamos el tablero y preguntamos si quiere volver a jugar
+                } else {
                     Column {
                         //Se pone al ganador
                         if (puntosJugador.value > puntosMaquina.value) {
@@ -144,7 +151,6 @@ fun juego(modifier: Modifier = Modifier) {
                         movimiento(maquina.value)
 
                     }
-
                 }
             }
 
@@ -246,7 +252,7 @@ fun juego(modifier: Modifier = Modifier) {
                         }
                 )
 
-            } //Fila con el mensaje
+            }
         }
         }
 
