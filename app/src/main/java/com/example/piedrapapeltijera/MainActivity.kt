@@ -93,18 +93,18 @@ fun juego(modifier: Modifier = Modifier) {
             //Fila que indica los nombres de los jugadores.
             Row(verticalAlignment = Alignment.Top,
                 modifier = Modifier
-                    .weight(2F, true)
+                    .weight(1F, true)
                     .fillMaxWidth(),
 
                 horizontalArrangement = Arrangement.SpaceEvenly
             ){
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-                        Text(text = "Jugador", modifier = Modifier.padding(24.dp))
+                        Text(text = "Jugador", modifier = Modifier.padding(24.dp), fontSize = 24.sp, fontWeight = Bold)
                     }
 
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(text = "Máquina", modifier = Modifier.padding(24.dp))
+                        Text(text = "Máquina", modifier = Modifier.padding(24.dp), fontSize = 24.sp, fontWeight = Bold)
                     }
 
             }
@@ -119,14 +119,18 @@ fun juego(modifier: Modifier = Modifier) {
                 //Hacemo una condición que se rompe en el momento que la puntuación o de la
                 //máquina o del jugador llega a 5. Esto en realidad sería un bucle.
                 if (puntosJugador.value<5&&puntosMaquina.value<5) {
-                    //Llama a la función que pinta la imagen del movimiento del jugador
-                    movimiento(jugador.value)
 
-                    //LLama a la función que pinta la imagen del movimiento de la máquina,
-                    //Esta imagen dependerá de la función que randomiza el movimiento de la
-                    //máquina.
-                    movimiento(maquina.value)
+                    Column (modifier=modifier.weight(1F,true)){
+                        //Llama a la función que pinta la imagen del movimiento del jugador
+                        movimiento(jugador.value)
 
+                    }
+                   Column (modifier=modifier.weight(1F,true)){
+                       //LLama a la función que pinta la imagen del movimiento de la máquina,
+                       //Esta imagen dependerá de la función que randomiza el movimiento de la
+                       //máquina.
+                       movimiento(maquina.value)
+                   }
                 //Cuando se rompe la condición, bloqueamos el tablero y preguntamos si quiere volver a jugar
                 } else {
                     Column {
@@ -164,13 +168,13 @@ fun juego(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .height(70.dp)
                     .weight(2F, true)
+                    .padding(0.dp, 0.dp, 0.dp, 15.dp),
 
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.piedra),
                     contentDescription = "piedra",
                     modifier = Modifier
-                        .clip(CircleShape)
                         .weight(1F, true)
                         .clickable {
                             //Pone el movimiento del jugador a Piedra.
