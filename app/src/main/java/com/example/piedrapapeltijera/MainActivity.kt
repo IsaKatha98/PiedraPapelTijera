@@ -24,7 +24,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.fontResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -128,15 +132,14 @@ fun juego(modifier: Modifier = Modifier) {
                     Column {
                         //Se pone al ganador
                         if (puntosJugador.value > puntosMaquina.value) {
-                            Text(text = "Ha ganado el jugador")
+                            Text(text = "Ha ganado el jugador", fontSize = 24.sp)
                         } else if (puntosJugador.value < puntosMaquina.value) {
-                            Text(text = "Ha ganado la máquina")
-                        } else {
-                            Text(text = "Empate")
+                            Text(text = "Ha ganado la máquina", fontSize = 24.sp)
                         }
+                        Text(fontWeight = FontWeight.Bold,
+                            text = "Si quiere volver a jugar, haga click sobre este texto!!",
+                            fontSize = 24.sp,
 
-                        Text(
-                            text = "Si quiere volver a jugar, haga click sobre este texto!",
                             modifier = Modifier.clickable
                             {
                                 puntosJugador.value=0
