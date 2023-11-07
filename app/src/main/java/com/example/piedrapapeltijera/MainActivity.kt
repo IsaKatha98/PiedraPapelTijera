@@ -1,12 +1,7 @@
 package com.example.piedrapapeltijera
 
-import android.R.attr.backdropColor
-import android.R.attr.text
 import android.R.attr.value
-import android.graphics.Outline
 import android.os.Bundle
-import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
@@ -42,10 +38,10 @@ import androidx.compose.ui.unit.sp
 import com.example.piedrapapeltijera.ui.theme.PiedraPapelTijeraTheme
 import kotlin.random.Random
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.modifier.modifierLocalMapOf
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -83,10 +79,14 @@ fun navPantallas() {
 
     NavHost (navController=navController, startDestination="login") {
 
-        composable("login") {login (navController=navController)
+        //Pantalla del login
+        composable("login") {login (navController=navController) }
 
-        }
+        //Pantalla del juego
         composable("juego") { juego (navController=navController)}
+
+        //Pantalla final
+        composable ("podio"){podio(navController=navController)}
     }
 
 }
@@ -97,6 +97,7 @@ fun navPantallas() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun login( modifier: Modifier = Modifier, navController: NavController) {
+
     var userName by remember { mutableStateOf(TextFieldValue()) }
     var password by remember { mutableStateOf(TextFieldValue()) }
 
@@ -113,7 +114,7 @@ fun login( modifier: Modifier = Modifier, navController: NavController) {
 
         Image(
             painter = painterResource(R.drawable.inicio),
-            contentDescription = "gato llorando"
+            contentDescription = "inicio"
 
         )
 
@@ -240,33 +241,26 @@ fun login( modifier: Modifier = Modifier, navController: NavController) {
                     }
                 //Cuando se rompe la condición, bloqueamos el tablero y preguntamos si quiere volver a jugar
                 } else {
-                    Column {
+                    Column (horizontalAlignment = Alignment.CenterHorizontally){
                         //Se pone al ganador
                         if (puntosJugador.value > puntosMaquina.value) {
                             Text(text = "Ha ganado el jugador", fontSize = 24.sp)
                         } else if (puntosJugador.value < puntosMaquina.value) {
                             Text(text = "Ha ganado la máquina", fontSize = 24.sp)
                         }
-                        Text(fontWeight = FontWeight.Bold,
-                            text = "Si quiere volver a jugar, haga click sobre este texto!!",
-                            fontSize = 24.sp,
 
-                            modifier = Modifier.clickable
-                            {
-                                puntosJugador.value = 0
-                                puntosMaquina.value = 0
+                        //Botón que lleva a la pantalla final
+                        ElevatedButton(
 
-                            }
+                            modifier=Modifier.padding(25.dp),
+                            onClick = { navController.navigate("podio")}) {
 
-                            //TODO: hay que bloquear los botones.
-                        )
-                        jugador.value = ""
-                        movimiento(jugador.value)
-
-                        maquina.value = ""
-                        movimiento(maquina.value)
+                            Text("Resultados", fontSize = 30.sp, fontWeight = Bold)
+                        }
+                        //TODO: hay que bloquear los botones.
 
                     }
+
                 }
             }
 
@@ -412,10 +406,75 @@ fun login( modifier: Modifier = Modifier, navController: NavController) {
         return movimiento
     }
 
+/**
+ * Función que diseña la pantalla final.
+ */
+@Composable
+fun podio (navController:NavController) {
+
+    //Declaración de variables
+    var jugador = remember { mutableStateOf("") }//Guarda la tirada del jugador
+    var maquina = remember { mutableStateOf("") }//Guarda la tirada de la máquina
+    var puntosJugador = remember { mutableStateOf(0) }//Guarda los puntos del jugador
+    var puntosMaquina = remember { mutableStateOf(0) }//Guarda los puntos de la máquina
+
+    Column (
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(8.dp)
+            .background(Color.White),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+
+    ){
+        //Hay que poner los valores a 0.
+
+        Image(
+            modifier=Modifier.weight(1F),
+            painter = painterResource(R.drawable.podio),
+            contentDescription = "podio",
+             )
+
+        //TODO: aquí van las cosas de la base de datos.
+        Column (modifier= Modifier.weight(2F)) {
+
+        }
+
+        Row (modifier= Modifier.weight(1F)){
+            //Botón de vuelta al juego.
+            ElevatedButton(
+
+                modifier= Modifier
+                    .weight(1F),
+                onClick = { navController.navigate("juego")}) {
+
+                Text("Volver a jugar", fontSize = 30.sp)
+
+                //Ponemos los valores a 0.
+                puntosJugador.value=0
+                puntosMaquina.value=0
+            }
+
+            //Botón que lleva al login
+            ElevatedButton(
+
+                modifier= Modifier
+                    .weight(1F),
+                onClick = { navController.navigate("login")}) {
+
+                Text("Salir", fontSize = 30.sp)
+
+            }
+        }
+
+    }
+
+}
+
 @Preview
     @Composable
     fun GreetingPreview() {
         PiedraPapelTijeraTheme {
-            navPantallas()
+           navPantallas()
         }
     }
