@@ -47,6 +47,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,11 +63,32 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background,
 
                 ) {
-                    login("hola")
+                    navPantallas()
                 }
             }
         }
     }
+
+
+
+    }
+
+/**
+ * Función que navega entre pantallas.
+ */
+@Composable
+fun navPantallas() {
+
+    val navController= rememberNavController()
+
+    NavHost (navController=navController, startDestination="login") {
+
+        composable("login") {login (navController=navController)
+
+        }
+        composable("juego") { juego (navController=navController)}
+    }
+
 }
 
 /**
@@ -71,7 +96,7 @@ class MainActivity : ComponentActivity() {
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun login(name: String, modifier: Modifier = Modifier) {
+fun login( modifier: Modifier = Modifier, navController: NavController) {
     var userName by remember { mutableStateOf(TextFieldValue()) }
     var password by remember { mutableStateOf(TextFieldValue()) }
 
@@ -116,7 +141,7 @@ fun login(name: String, modifier: Modifier = Modifier) {
 
         ElevatedButton(
             modifier=Modifier.padding(25.dp),
-            onClick = { juego() }) {
+            onClick = { }) {
 
             Text("Go")
         }
@@ -127,7 +152,7 @@ fun login(name: String, modifier: Modifier = Modifier) {
      * Función que diseña la interfaz.
      */
     @Composable
-    fun juego(modifier: Modifier = Modifier) {
+    fun juego(modifier: Modifier = Modifier, navController:navController) {
 
         //Declaración de variables
         var jugador = remember { mutableStateOf("") }//Guarda la tirada del jugador
