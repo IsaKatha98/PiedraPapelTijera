@@ -141,7 +141,7 @@ fun login( modifier: Modifier = Modifier, navController: NavController) {
 
         ElevatedButton(
             modifier=Modifier.padding(25.dp),
-            onClick = { }) {
+            onClick = { navController.navigate("juego")}) {
 
             Text("Go")
         }
@@ -152,7 +152,7 @@ fun login( modifier: Modifier = Modifier, navController: NavController) {
      * Función que diseña la interfaz.
      */
     @Composable
-    fun juego(modifier: Modifier = Modifier, navController:navController) {
+    fun juego(modifier: Modifier = Modifier, navController:NavController) {
 
         //Declaración de variables
         var jugador = remember { mutableStateOf("") }//Guarda la tirada del jugador
@@ -225,7 +225,7 @@ fun login( modifier: Modifier = Modifier, navController: NavController) {
             ) {
                 //Hacemo una condición que se rompe en el momento que la puntuación o de la
                 //máquina o del jugador llega a 5. Esto en realidad sería un bucle.
-                if (puntosJugador.value < 5 && puntosMaquina.value < 5) {
+                if ( puntosMaquina.value < 3) {
 
                     Column(modifier = modifier.weight(1F, true)) {
                         //Llama a la función que pinta la imagen del movimiento del jugador
@@ -238,7 +238,7 @@ fun login( modifier: Modifier = Modifier, navController: NavController) {
                         //máquina.
                         movimiento(maquina.value)
                     }
-                    //Cuando se rompe la condición, bloqueamos el tablero y preguntamos si quiere volver a jugar
+                //Cuando se rompe la condición, bloqueamos el tablero y preguntamos si quiere volver a jugar
                 } else {
                     Column {
                         //Se pone al ganador
@@ -257,6 +257,8 @@ fun login( modifier: Modifier = Modifier, navController: NavController) {
                                 puntosMaquina.value = 0
 
                             }
+
+                            //TODO: hay que bloquear los botones.
                         )
                         jugador.value = ""
                         movimiento(jugador.value)
@@ -414,6 +416,6 @@ fun login( modifier: Modifier = Modifier, navController: NavController) {
     @Composable
     fun GreetingPreview() {
         PiedraPapelTijeraTheme {
-            login("hola")
+            navPantallas()
         }
     }
